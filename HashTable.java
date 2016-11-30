@@ -81,6 +81,10 @@ public class HashTable<T> {
         this.maxChainLength = maxChainLength;
     }
     
+	/**
+	 * Populates the hash table array with empty lists since chaining is used
+	 * to resolve conflicts.
+	 */
 	private void initializeHashTable() {
 		for (int i = 0; i < hashTable.length; i++) {
 			hashTable[i] = new LinkedList<T>();  
@@ -102,6 +106,12 @@ public class HashTable<T> {
         return hashTable[hashCode].get(index);
     }
     
+    /**
+     * Generates the hash code for the given object with respect to the current
+     * hash table properties.
+     * @param item  The object to be hashed
+     * @return The hash code, e.g. array index, for the object
+     */
     private int generateObjectHash(T item) {
     	int hashCode = item.hashCode();
     	hashCode = hashCode % hashTable.length;
@@ -143,14 +153,27 @@ public class HashTable<T> {
         }
     }
     
+    /**
+     * Checks if the hash table exceeds the max load factor.
+     * @return True if the maximum load factor has been exceeded.
+     */
     private boolean checkLoadFactor() {
     	return (getLoadFactor() > maxLoadFactor);
     }
     
+    /**
+     * Returns the current load factor of the hash table.
+     * @return The current load factor of the hash table.
+     */
     private double getLoadFactor() {
     	return ((double)numItems / hashTable.length);
     }
     
+    /**
+     * Checks if any chain in the hash table exceeds the max chain length.
+     * @return True if any chain in the hash table has exceeded the maximum
+     * chain length.
+     */
     private boolean checkChainLength() {
     	// Disable this check if we've resized too many times
     	if (numResizes > maxResizes) { return false; }
@@ -160,12 +183,21 @@ public class HashTable<T> {
     	return false;
     }
     
+    /**
+     * Checks if the chain at a given index has exceeded the max chain length.
+     * @param index The array index in the hash table to check.
+     * @return True if the length of the given chain is greater than the max.
+     */
     private boolean checkChainLength(int index) {
     	// Disable this check if we've resized too many times
     	if (numResizes > maxResizes) { return false; }
     	return (hashTable[index].size() > maxChainLength);
     }
     
+    /**
+     * Searches the hash table for the longest chain legnth.
+     * @return The longest chain in the hash table.
+     */
     private int getMaxChainLength() {
     	int maxLength = 0;
     	for (int i = 0; i < hashTable.length; i++) {
@@ -176,6 +208,9 @@ public class HashTable<T> {
     	return maxLength;
     }
     
+    /**
+     * Resizes the hash table to resolve load factor or chain length conflicts.
+     */
     @SuppressWarnings("unchecked")
 	private void resizeHashTable() {
 		LinkedList<T>[] currHashTable = hashTable.clone();
